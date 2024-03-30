@@ -34,3 +34,4 @@ fn main() {
 // 7. make header if 1st bit is 1 then next next 8bits represent value, append this to file head.
 // 8. reconstruct  tree from header if starts from 1bit make a node and push if 0 pop 2 and make a node push in tree
 // 9. traverse through bit encoded value to reconstruct the string
+https://engineering.purdue.edu/ece264/21sp/hw/HW15?alt=huffman

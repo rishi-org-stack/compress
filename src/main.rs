@@ -1,29 +1,81 @@
-use std::{fs::File, io::Read};
+#[derive(Debug)]
+struct Node {
+    val: u8,
+    right: Option<Box<Node>>,
+    left: Option<Box<Node>>,
+}
+
+impl Node {
+    fn new(left_node: Node, right_node: Node) -> Node {
+        Node {
+            val: right_node.val + left_node.val,
+            right: Some(Box::new(right_node)),
+            left: Some(Box::new(left_node)),
+        }
+    }
+
+    fn iter(&self) {
+        if let Some(right) = &self.right {
+            println!("r {}", self.val);
+            let mut right_iter = right;
+
+            loop {
+                println!("r {}", right_iter.val);
+                if let Some(r) = &right_iter.right {
+                    right_iter = r;
+                } else {
+                    break;
+                }
+            }
+        }
+    }
+
+    // fn add_left(&self, left_node: Node) {
+    //     let right = Some(Box::new(*self));
+    //     let left = Some(Box::new(left_node));
+    //     Node {
+    //         val: self.val + left_node.val,
+    //         right: right,
+    //         left: Some(Box::new(left_node)),
+    //     };
+    // }
+}
 
 fn main() {
-    let mut file = match File::open("java.txt") {
-        Ok(f) => f,
-        Err(e) => {
-            println!("error {e}");
-            return;
-        }
+    let left = Node {
+        val: 1,
+        left: None,
+        right: None,
     };
 
-    let mut buffer: [u8; 124] = [0; 124];
-    let size = match file.read(&mut buffer) {
-        Ok(s) => s,
-        Err(e) => {
-            println!("failed to read file {}", e);
-            return;
-        }
+    let right = Node {
+        val: 1,
+        left: None,
+        right: None,
     };
 
-    let mut char_freq: [u32; 256] = [0; 256];
-    buffer.into_iter().for_each(|v| char_freq[v as usize] += 1);
-    let buffer_str = String::from_utf8(buffer.to_vec()).expect("unhandled string  conversion");
-    println!("fetched a file size {size} content\n {buffer_str}",);
-    println!("freq {:#?}", char_freq);
+    let mut head = Node::new(left, right);
+
+    head = Node::new(
+        Node {
+            val: 2,
+            left: None,
+            right: None,
+        },
+        head,
+    );
+    head = Node::new(
+        Node {
+            val: 4,
+            left: None,
+            right: None,
+        },
+        head,
+    );
+    head.iter();
+    println!("{:#?}", head)
 }
+
 // TODO
 // 1. reading a file
 // 2. calculate frequency
@@ -34,4 +86,5 @@ fn main() {
 // 7. make header if 1st bit is 1 then next next 8bits represent value, append this to file head.
 // 8. reconstruct  tree from header if starts from 1bit make a node and push if 0 pop 2 and make a node push in tree
 // 9. traverse through bit encoded value to reconstruct the string
-https://engineering.purdue.edu/ece264/21sp/hw/HW15?alt=huffman
+// https://engineering.purdue.edu/ece264/21sp/hw/HW15?alt=huffman
+// https://rust-unofficial.github.io/too-many-lists/first-layout.html
